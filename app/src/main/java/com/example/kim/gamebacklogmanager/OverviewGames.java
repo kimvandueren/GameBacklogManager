@@ -1,24 +1,60 @@
 package com.example.kim.gamebacklogmanager;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OverviewGames extends AppCompatActivity {
+
+    private Toolbar toolbar;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private List<Game> mGames;
+
+    private FloatingActionButton addGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview_games);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton addGame = (FloatingActionButton) findViewById(R.id.addGame);
+        //PLACEHOLDER
+        mGames = new ArrayList<>();
+        for (int i = 0; i < Game.TITLE.length; i++) {
+            mGames.add(new Game(Game.TITLE[i],
+                    Game.STATUS[i],
+                    Game.PLATFORM[i],
+                    Game.DATE[i]));
+        }
+
+        mRecyclerView = findViewById(R.id.recyclerView);
+
+        // sets linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specifies an adapter
+        mAdapter = new GamesAdapter(this, mGames);
+        mRecyclerView.setAdapter(mAdapter);
+
+        //floating action button to open addGame activity
+        addGame = (FloatingActionButton) findViewById(R.id.addGame);
         addGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
