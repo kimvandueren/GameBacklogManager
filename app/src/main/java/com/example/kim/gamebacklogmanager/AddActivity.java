@@ -47,6 +47,8 @@ public class AddActivity extends AppCompatActivity{
 
         //sets currentDate to a string
         currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        final String formattedString = currentDate.format(formatter);
 
         //initializes spinner and sets adapter to spinner
         spinner = (Spinner) findViewById(R.id.editStatus_add);
@@ -65,7 +67,7 @@ public class AddActivity extends AppCompatActivity{
                         editPlatform.getText().toString(),
                         spinner.getSelectedItem().toString(),
                         editNotes.getText().toString(),
-                        currentDate
+                        formattedString
                 );
                 intent.putExtra(OverviewGames.EXTRA_GAME, game);
                 setResult(RESULT_OK, intent);

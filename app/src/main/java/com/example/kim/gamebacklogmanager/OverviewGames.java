@@ -1,6 +1,7 @@
 package com.example.kim.gamebacklogmanager;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +19,7 @@ public class OverviewGames extends AppCompatActivity {
     private Toolbar toolbar;
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private GamesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private List<Game> mGames;
@@ -31,12 +32,22 @@ public class OverviewGames extends AppCompatActivity {
     public static final int REQUESTCODE2 = 4321;
     private int mModifyPosition;
 
+    public final static int TASK_GET_ALL_GAMES = 0;
+    public final static int TASK_DELETE_GAME = 1;
+    public final static int TASK_UPDATE_GAME = 2;
+    public final static int TASK_INSERT_GAME = 3;
+
+    static AppDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview_games);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        db = AppDatabase.getInstance(this);
+        new GameAsyncTask(TASK_GET_ALL_GAMES).execute();
 
         mGames = new ArrayList<>();
         mRecyclerView = findViewById(R.id.recyclerView);
@@ -77,8 +88,8 @@ public class OverviewGames extends AppCompatActivity {
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                         int position = (viewHolder.getAdapterPosition());
+                        new GameAsyncTask(TASK_DELETE_GAME).execute(mGames.get(position));
                         mGames.remove(position);
-                        mAdapter.notifyItemRemoved(position);
                     }
 
                 };
@@ -88,12 +99,17 @@ public class OverviewGames extends AppCompatActivity {
         updateUI();
     }
 
+    public void onGameDbUpdated(List list) {
+        mGames = list;
+        updateUI();
+    }
+
     private void updateUI(){
         if (mAdapter == null){
             mAdapter = new GamesAdapter(this, mGames, gameClickListener);
             mRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.notifyDataSetChanged();
+            mAdapter.swapList(mGames);
         }
     }
 
@@ -109,14 +125,45 @@ public class OverviewGames extends AppCompatActivity {
             if (resultCode == RESULT_OK){
                 Game addedGame = data.getParcelableExtra(OverviewGames.EXTRA_GAME);
                 mGames.add(addedGame);
-                updateUI();
+                new GameAsyncTask(TASK_INSERT_GAME).execute(addedGame);
             }
         } else if (requestCode == REQUESTCODE2){
             if(resultCode == RESULT_OK){
                 Game updatedGame = data.getParcelableExtra(OverviewGames.EXTRA_GAME);
                 mGames.set(mModifyPosition, updatedGame);
-                updateUI();
+                new GameAsyncTask(TASK_UPDATE_GAME).execute(updatedGame);
             }
+        }
+    }
+
+    public class GameAsyncTask extends AsyncTask<Game, Void, List> {
+        private int taskCode;
+
+        public GameAsyncTask(int taskCode) {
+            this.taskCode = taskCode;
+        }
+
+        @Override
+        protected List doInBackground(Game... games) {
+            switch (taskCode){
+                case TASK_DELETE_GAME:
+                    db.gameDao().deleteGames(games[0]);
+                    break;
+                case TASK_UPDATE_GAME:
+                    db.gameDao().updateGames(games[0]);
+                    break;
+                case TASK_INSERT_GAME:
+                    db.gameDao().insertGames(games[0]);
+                    break;
+            }
+            //To return a new list with the updated data, we get all the data from the database again.
+            return db.gameDao().getAllGames();
+        }
+
+        @Override
+        protected void onPostExecute(List list) {
+            super.onPostExecute(list);
+            onGameDbUpdated(list);
         }
     }
 }

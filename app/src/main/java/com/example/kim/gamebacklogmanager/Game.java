@@ -1,5 +1,9 @@
 package com.example.kim.gamebacklogmanager;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverter;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,19 +11,24 @@ import android.support.annotation.RequiresApi;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
+@Entity(tableName = "game")
 public class Game implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    private long id;
+
+    @ColumnInfo(name = "gametitle")
     private String mGameTitle;
+    @ColumnInfo(name = "gameplatform")
     private String mGamePlatform;
+    @ColumnInfo(name = "gamestatus")
     private String mGameStatus;
+    @ColumnInfo(name = "gamenotes")
     private String mGameNotes;
-    private LocalDate mCurrentDate;
+    @ColumnInfo(name = "currentdate")
+    private String mCurrentDate;
 
-    private DateTimeFormatter formatter;
-    private String formattedString;
-
-    public Game(String mGameTitle, String mGamePlatform, String mGameStatus, String mGameNotes, LocalDate mCurrentDate) {
+    public Game(String mGameTitle, String mGamePlatform, String mGameStatus, String mGameNotes, String mCurrentDate) {
         this.mGameTitle = mGameTitle;
         this.mGamePlatform = mGamePlatform;
         this.mGameStatus = mGameStatus;
@@ -28,43 +37,42 @@ public class Game implements Parcelable {
     }
 
     //getters for all Game data
-    public String getmGameTitle() {
+    public long getId(){return id;}
+    public String getGameTitle() {
         return mGameTitle;
     }
-    public String getmGamePlatform() {
+    public String getGamePlatform() {
         return mGamePlatform;
     }
-    public String getmGameStatus() {
+    public String getGameStatus() {
         return mGameStatus;
     }
-    public String getmGameNotes() {
+    public String getGameNotes() {
         return mGameNotes;
     }
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public String getmCurrentDate() {
-        formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        formattedString = mCurrentDate.format(formatter);
-        return formattedString;
+    public String getCurrentDate() {
+        return mCurrentDate;
     }
 
     //setters for all Game data
-    public void setmGameTitle(String mGameTitle){
+    public void setId(long id){this.id = id;}
+    public void setGameTitle(String mGameTitle){
         this.mGameTitle = mGameTitle;
     }
-    public void setmGamePlatform(String mGamePlatform){
+    public void setGamePlatform(String mGamePlatform){
         this.mGamePlatform = mGamePlatform;
     }
-    public void setmGameStatus(String mGameStatus){
+    public void setGameStatus(String mGameStatus){
         this.mGameStatus = mGameStatus;
     }
-
-    public void setmGameNotes(String mGameNotes){
+    public void setGameNotes(String mGameNotes){
         this.mGameNotes = mGameNotes;
     }
-
-    public void setmCurrentDate(LocalDate mCurrentDate){
-
-        this.mCurrentDate = mCurrentDate;
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void setCurrentDate(LocalDate mCurrentDate){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedString = mCurrentDate.format(formatter);
+        this.mCurrentDate = formattedString;
     }
 
     @Override
@@ -72,23 +80,21 @@ public class Game implements Parcelable {
         return 0;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.mGameTitle);
         dest.writeString(this.mGamePlatform);
         dest.writeString(this.mGameStatus);
         dest.writeString(this.mGameNotes);
-        dest.writeLong(this.mCurrentDate.toEpochDay());
+        dest.writeString(this.mCurrentDate);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     protected Game(Parcel in) {
         this.mGameTitle = in.readString();
         this.mGamePlatform = in.readString();
         this.mGameStatus = in.readString();
         this.mGameNotes = in.readString();
-        this.mCurrentDate = LocalDate.ofEpochDay(in.readLong());
+        this.mCurrentDate = in.readString();
     }
 
     public static final Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {

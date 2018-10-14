@@ -22,6 +22,14 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         void gameOnClick (int i);
     }
 
+    public void swapList(List<Game> newList) {
+        mGames = newList;
+        if (newList != null) {
+            // Force the RecyclerView to refresh
+            this.notifyDataSetChanged();
+        }
+    }
+
     //sets TextViews from grid_cell as the items in the ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView gameTitle;
@@ -73,10 +81,10 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         final Game game = mGames.get(i);
 
         // populates the views with the data from the list
-        viewHolder.gameTitle.setText(game.getmGameTitle());
-        viewHolder.gamePlatform.setText(game.getmGamePlatform());
-        viewHolder.gameStatus.setText(game.getmGameStatus());
-        viewHolder.currentDate.setText(game.getmCurrentDate());
+        viewHolder.gameTitle.setText(game.getGameTitle());
+        viewHolder.gamePlatform.setText(game.getGamePlatform());
+        viewHolder.gameStatus.setText(game.getGameStatus());
+        viewHolder.currentDate.setText(game.getCurrentDate());
     }
 
     @Override

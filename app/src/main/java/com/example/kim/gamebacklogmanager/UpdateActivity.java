@@ -55,20 +55,20 @@ public class UpdateActivity extends AppCompatActivity {
 
         //obtain variables provided by OverviewGames
         final Game gameUpdate = getIntent().getParcelableExtra(OverviewGames.EXTRA_GAME);
-        editTitle.setText(gameUpdate.getmGameTitle());
-        editPlatform.setText(gameUpdate.getmGamePlatform());
-        editNotes.setText(gameUpdate.getmGameNotes());
+        editTitle.setText(gameUpdate.getGameTitle());
+        editPlatform.setText(gameUpdate.getGamePlatform());
+        editNotes.setText(gameUpdate.getGameNotes());
 
         //passes changes on to OverviewGames
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gameUpdate.setmGameTitle(editTitle.getText().toString());
-                gameUpdate.setmGamePlatform(editPlatform.getText().toString());
-                gameUpdate.setmGameNotes(editNotes.getText().toString());
-                gameUpdate.setmGameStatus(spinner.getSelectedItem().toString());
-                gameUpdate.setmCurrentDate(currentDate);
+                gameUpdate.setGameTitle(editTitle.getText().toString());
+                gameUpdate.setGamePlatform(editPlatform.getText().toString());
+                gameUpdate.setGameNotes(editNotes.getText().toString());
+                gameUpdate.setGameStatus(spinner.getSelectedItem().toString());
+                gameUpdate.setCurrentDate(currentDate);
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(OverviewGames.EXTRA_GAME, gameUpdate);
