@@ -3,7 +3,6 @@ package com.example.kim.gamebacklogmanager;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+//Game object is an Entity
 @Entity(tableName = "game")
 public class Game implements Parcelable {
     @PrimaryKey(autoGenerate = true)
@@ -28,6 +28,7 @@ public class Game implements Parcelable {
     @ColumnInfo(name = "currentdate")
     private String mCurrentDate;
 
+    //connects attributes to game object
     public Game(String mGameTitle, String mGamePlatform, String mGameStatus, String mGameNotes, String mCurrentDate) {
         this.mGameTitle = mGameTitle;
         this.mGamePlatform = mGamePlatform;

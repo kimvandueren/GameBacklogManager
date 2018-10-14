@@ -16,7 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OverviewGames extends AppCompatActivity {
-    private Toolbar toolbar;
+    public static final String EXTRA_GAME = "Game";
+    public static final int REQUESTCODE1 = 1234;
+    public static final int REQUESTCODE2 = 4321;
+
+    public final static int TASK_GET_ALL_GAMES = 0;
+    public final static int TASK_DELETE_GAME = 1;
+    public final static int TASK_UPDATE_GAME = 2;
+    public final static int TASK_INSERT_GAME = 3;
 
     private RecyclerView mRecyclerView;
     private GamesAdapter mAdapter;
@@ -24,18 +31,9 @@ public class OverviewGames extends AppCompatActivity {
 
     private List<Game> mGames;
     private GamesAdapter.GameClickListener gameClickListener;
-
     private FloatingActionButton addGame;
 
-    public static final String EXTRA_GAME = "Game";
-    public static final int REQUESTCODE1 = 1234;
-    public static final int REQUESTCODE2 = 4321;
     private int mModifyPosition;
-
-    public final static int TASK_GET_ALL_GAMES = 0;
-    public final static int TASK_DELETE_GAME = 1;
-    public final static int TASK_UPDATE_GAME = 2;
-    public final static int TASK_INSERT_GAME = 3;
 
     static AppDatabase db;
 
@@ -43,7 +41,7 @@ public class OverviewGames extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview_games);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         db = AppDatabase.getInstance(this);
@@ -56,6 +54,7 @@ public class OverviewGames extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        //opens Update Activity
         gameClickListener = new GamesAdapter.GameClickListener(){
             @Override
             public void gameOnClick(int i) {
@@ -120,6 +119,7 @@ public class OverviewGames extends AppCompatActivity {
         return true;
     }
 
+    //returns results from add and update activities
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == REQUESTCODE1){
             if (resultCode == RESULT_OK){
@@ -136,6 +136,7 @@ public class OverviewGames extends AppCompatActivity {
         }
     }
 
+    //runs database activities in the background
     public class GameAsyncTask extends AsyncTask<Game, Void, List> {
         private int taskCode;
 

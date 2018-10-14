@@ -43,7 +43,7 @@ public class UpdateActivity extends AppCompatActivity {
         editPlatform = findViewById(R.id.editPlatform_update);
         editNotes = findViewById(R.id.editNotes_update);
 
-        //sets currentDate to a string
+        //sets currentDate
         currentDate = LocalDate.now();
 
         //initializes spinner and sets adapter to spinner
